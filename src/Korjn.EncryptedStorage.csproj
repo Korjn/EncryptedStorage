@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <AssemblyName>Korjn.EncryptedStorage</AssemblyName>
+    <RootNamespace>Korjn.EncryptedStorage</RootNamespace>
+
+    <!-- nuget -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackRelease>true</PackRelease>
+    <PublishRelease>true</PublishRelease>
+    <PackageId>Korjn.EncryptedStorage</PackageId>
+    <Authors>Saken</Authors>
+    <Version>9.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>    
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Provides secure, extensible encrypted storage backends for configuration and secrets using ASP.NET Core Data Protection.</Description>
+    <PackageTags>encryption;security;data-protection;json;configuration;secrets;di;aspnetcore;dotnet;storage;options;encrypted-storage;provider;credentials</PackageTags>    <!-- Теги для поиска -->
+    <RepositoryUrl>https://github.com/Korjn/EncryptedStorage</RepositoryUrl>    <!-- URL репозитория -->
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="9.0.3" PrivateAssets="none"  />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.3" PrivateAssets="none"  />
+  </ItemGroup>
+
+  <ItemGroup>    
+    <None Include="../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
