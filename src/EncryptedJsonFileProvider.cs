@@ -23,9 +23,7 @@ internal class EncryptedJsonFileProvider<T> : IEncryptedJsonFileProvider<T> wher
 
     public T Load()
     {
-        var filePath = Path.GetFullPath(options.FilePath);
-
-        var result = JsonSerializer.Deserialize<T>(File.ReadAllText(filePath), jsonOptions)
+        var result = JsonSerializer.Deserialize<T>(File.ReadAllText(options.FilePath))
                   ?? throw new InvalidOperationException("Deserialization failed");
 
         var encryptedProps = typeof(T)
@@ -44,8 +42,8 @@ internal class EncryptedJsonFileProvider<T> : IEncryptedJsonFileProvider<T> wher
 
             if (!value.StartsWith(options.Signature))
             {
-                var encrypted = options.Signature + protector.Protect(value);
-                prop.SetValue(result, encrypted);
+                value = options.Signature + protector.Protect(value);
+                prop.SetValue(result, value);
                 needRewrite = true;
             }
 
@@ -56,7 +54,7 @@ internal class EncryptedJsonFileProvider<T> : IEncryptedJsonFileProvider<T> wher
 
         if (needRewrite)
         {
-            File.WriteAllText(filePath, JsonSerializer.Serialize(result, jsonOptions));
+            File.WriteAllText(options.FilePath, JsonSerializer.Serialize(result, jsonOptions));
         }
 
         return result;

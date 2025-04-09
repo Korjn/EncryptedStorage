@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configureOptions);
 
-        services.AddOptionsWithValidateOnStart<EncryptedJsonFileProviderOptions>(name)
+        services.AddOptions<EncryptedJsonFileProviderOptions>(name)
                 .Configure(configureOptions);
 
         services.TryAddKeyedTransient<IEncryptedJsonFileProvider<T>>(name, (sp, name) =>
@@ -56,20 +56,17 @@ public static class ServiceCollectionExtensions
         where T : class
     {
         ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(configureOptions);
-
-        services.AddOptionsWithValidateOnStart<EncryptedJsonFileProviderOptions>()
-                .Configure(configureOptions);
+        ArgumentNullException.ThrowIfNull(configureOptions);        
 
         services.TryAddTransient<IEncryptedJsonFileProvider<T>>(sp =>
         {
             var optionsAccessor = sp.GetRequiredService<IOptions<EncryptedJsonFileProviderOptions>>();
-            var provider = sp.GetRequiredService<IDataProtectionProvider>();
+            var provider = sp.GetRequiredService<IDataProtectionProvider>();            
 
-            var options = optionsAccessor.Value;
-
-            return new EncryptedJsonFileProvider<T>(provider, options);
+            return new EncryptedJsonFileProvider<T>(provider, optionsAccessor.Value);
         });
+
+        services.Configure(configureOptions);
 
         return services;
     }
