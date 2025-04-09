@@ -10,6 +10,7 @@
 
     <!-- nuget -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackRelease>true</PackRelease>
     <PublishRelease>true</PublishRelease>
     <PackageId>Korjn.EncryptedStorage</PackageId>
