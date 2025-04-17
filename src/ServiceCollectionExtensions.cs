@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace Korjn.EncryptedStorage;
+namespace Korjn.EncryptedStorage.DependencyInjection;
 
 /// <summary>
 /// Provides extension methods for registering <see cref="IEncryptedJsonFileProvider{T}"/> and related services into the DI container.
@@ -26,13 +26,14 @@ public static class ServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configureOptions);
+        ArgumentNullException.ThrowIfNull(name);
 
         services.AddOptions<EncryptedJsonFileProviderOptions>(name)
                 .Configure(configureOptions);
 
-        services.TryAddKeyedTransient<IEncryptedJsonFileProvider<T>>(name, (sp, name) =>
+        services.TryAddKeyedSingleton<IEncryptedJsonFileProvider<T>>(name, (sp, _) =>
         {
-            var optionsAccessor = sp.GetRequiredService<IOptionsSnapshot<EncryptedJsonFileProviderOptions>>();
+            var optionsAccessor = sp.GetRequiredService<IOptionsMonitor<EncryptedJsonFileProviderOptions>>();
             var provider = sp.GetRequiredService<IDataProtectionProvider>();
 
             var options = optionsAccessor.Get(name?.ToString());

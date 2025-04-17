@@ -20,5 +20,5 @@ public record Credential
     /// The value is expected to be encrypted and decrypted automatically by <see cref="IEncryptedJsonFileProvider{T}"/>.
     /// </remarks>
     [Encrypted]    
-    public string? Password { get; internal set; }
+    public string? Password { get; init; }
 }

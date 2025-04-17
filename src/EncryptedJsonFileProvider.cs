@@ -15,7 +15,7 @@ internal class EncryptedJsonFileProvider<T> : IEncryptedJsonFileProvider<T> wher
                                      EncryptedJsonFileProviderOptions options)
     {
         this.options = options;
-        
+
         protector = provider.CreateProtector(options.Purpose);
 
         options.Signature = Convert.ToBase64String(Encoding.UTF8.GetBytes(options.SignatureMarker ?? "2x2"));
@@ -23,40 +23,49 @@ internal class EncryptedJsonFileProvider<T> : IEncryptedJsonFileProvider<T> wher
 
     public T Load()
     {
-        var result = JsonSerializer.Deserialize<T>(File.ReadAllText(options.FilePath))
-                  ?? throw new InvalidOperationException("Deserialization failed");
+        var fileJson = File.ReadAllText(options.FilePath);
 
-        var encryptedProps = typeof(T)
-                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        var encryptObject = JsonSerializer.Deserialize<T>(fileJson)
+                  ?? throw new InvalidOperationException("Deserialization failed #1");
+
+        // Поиск полей, помеченных как [Encrypted]
+        var encryptedObjectProps = typeof(T)
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty)
                     .Where(p => p.GetCustomAttribute<EncryptedAttribute>() != null)
                     .ToArray();
 
-        bool needRewrite = false;
-
-        foreach (var prop in encryptedProps)
+        // Зашифровываем если есть незашифрованные поля
+        foreach (var property in encryptedObjectProps)
         {
-            if (prop.GetValue(result) is not string value)
+            if (property.GetValue(encryptObject) is string propertyValue && !propertyValue.StartsWith(options.Signature)) // <- не зашифровано
             {
-                continue;
+                var encrypted = options.Signature + protector.Protect(propertyValue);
+                property.SetValue(encryptObject, encrypted); // <- Перезаписываем pашифрованным                                
             }
-
-            if (!value.StartsWith(options.Signature))
-            {
-                value = options.Signature + protector.Protect(value);
-                prop.SetValue(result, value);
-                needRewrite = true;
-            }
-
-            var decrypted = protector.Unprotect(value[options.Signature.Length..]);
-
-            prop.SetValue(result, decrypted);
         }
 
-        if (needRewrite)
+        var encryptedJson = JsonSerializer.Serialize(encryptObject, jsonOptions);
+
+        // Сохраняем если были изменения
+        if (!string.Equals(encryptedJson, fileJson))
         {
-            File.WriteAllText(options.FilePath, JsonSerializer.Serialize(result, jsonOptions));
+            File.WriteAllText(options.FilePath, encryptedJson);
+        }
+
+        // Загрузка объекта из зашифрованного JSON
+        var result = JsonSerializer.Deserialize<T>(encryptedJson)
+             ?? throw new InvalidOperationException("Deserialization failed #2");
+
+        // Расшифровка
+        foreach (var property in encryptedObjectProps)
+        {
+            if (property.GetValue(result) is string propertyValue && propertyValue.StartsWith(options.Signature)) // <- зашифровано
+            {
+                var decrypted = protector.Unprotect(propertyValue[options.Signature.Length..]);
+                property.SetValue(result, decrypted); // !!! Перезаписываем расшифрованным
+            }
         }
 
         return result;
-    }    
+    }
 }
