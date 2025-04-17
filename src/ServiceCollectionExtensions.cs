@@ -59,7 +59,7 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configureOptions);        
 
-        services.TryAddTransient<IEncryptedJsonFileProvider<T>>(sp =>
+        services.TryAddSingleton<IEncryptedJsonFileProvider<T>>(sp =>
         {
             var optionsAccessor = sp.GetRequiredService<IOptions<EncryptedJsonFileProviderOptions>>();
             var provider = sp.GetRequiredService<IDataProtectionProvider>();            
