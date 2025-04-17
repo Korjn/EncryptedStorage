@@ -15,7 +15,7 @@
     <PublishRelease>true</PublishRelease>
     <PackageId>Korjn.EncryptedStorage</PackageId>
     <Authors>Saken</Authors>
-    <Version>9.0.1</Version>
+    <Version>9.0.2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>    
     <PackageReadmeFile>README.md</PackageReadmeFile>
