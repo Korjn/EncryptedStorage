@@ -37,7 +37,9 @@ internal class EncryptedJsonFileProvider<T> : IEncryptedJsonFileProvider<T> wher
         // Зашифровываем если есть незашифрованные поля
         foreach (var property in encryptedObjectProps)
         {
-            if (property.GetValue(encryptObject) is string propertyValue && !propertyValue.StartsWith(options.Signature)) // <- не зашифровано
+            if (property.GetValue(encryptObject) is not string propertyValue) continue;
+
+            if (!propertyValue.StartsWith(options.Signature)) // <- не зашифровано
             {
                 var encrypted = options.Signature + protector.Protect(propertyValue);
                 property.SetValue(encryptObject, encrypted); // <- Перезаписываем pашифрованным                                
@@ -59,7 +61,9 @@ internal class EncryptedJsonFileProvider<T> : IEncryptedJsonFileProvider<T> wher
         // Расшифровка
         foreach (var property in encryptedObjectProps)
         {
-            if (property.GetValue(result) is string propertyValue && propertyValue.StartsWith(options.Signature)) // <- зашифровано
+            if (property.GetValue(result) is not string propertyValue) continue;
+
+            if (propertyValue.StartsWith(options.Signature)) // <- зашифровано
             {
                 var decrypted = protector.Unprotect(propertyValue[options.Signature.Length..]);
                 property.SetValue(result, decrypted); // !!! Перезаписываем расшифрованным
