@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -15,7 +15,7 @@
     <PublishRelease>true</PublishRelease>
     <PackageId>Korjn.EncryptedStorage</PackageId>
     <Authors>Saken</Authors>
-    <Version>9.0.2</Version>
+    <Version>10.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>    
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -26,8 +26,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="9.0.3" PrivateAssets="none"  />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.3" PrivateAssets="none"  />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="10.0.0" PrivateAssets="none" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" PrivateAssets="none" />
   </ItemGroup>
 
   <ItemGroup>    
